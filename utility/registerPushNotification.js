@@ -33,10 +33,7 @@ export const saveTokenIfChanged = async (newToken, staffId, accessToken) => {
     const oldToken = await AsyncStorage.getItem('expoPushToken_for_' + virtualId);
     const endPoint = await AsyncStorage.getItem('endPoint');
     const companyId = await AsyncStorage.getItem('companyId');
-    console.log('oldToken', oldToken);
-    console.log('newToken', newToken);
-    console.log('endPoint', endPoint);
-    console.log('companyId', companyId);
+
     if (oldToken !== newToken && endPoint && companyId) {
       // Save new token in backend
       await axios.post(`${endPoint}/api/save_token/${companyId}`, 

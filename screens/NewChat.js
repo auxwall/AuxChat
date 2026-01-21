@@ -29,7 +29,7 @@ export default function NewChatScreen() {
           companyId: companyId || ''
         });
       } catch (e) {
-        console.error("Config load error", e);
+        console.log("Config load error", e);
       }
     };
     loadConfig();

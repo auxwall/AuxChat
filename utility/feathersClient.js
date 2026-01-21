@@ -52,7 +52,7 @@ export const authenticateFeathers = async (token) => {
             companyId
         });
     } catch (error) {
-        console.error("Feathers Auth Critical Error:", error);
+        console.log("Feathers Auth Critical Error:", error);
         throw error;
     }
 };

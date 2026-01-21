@@ -33,7 +33,7 @@ const CreateGroupScreen = () => {
 
                 await authenticateFeathers();
             } catch (e) {
-                console.error("Create group screen init error:", e.message);
+                console.log("Create group screen init error:", e.message);
             } finally {
                 setLoadingConfig(false);
             }

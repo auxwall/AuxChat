@@ -32,7 +32,7 @@ export default function Login({ setConfig, setLogin }) {
         autoLogin();
       }
     } catch (error) {
-      console.error("Error checking API URL:", error);
+      console.log("Error checking API URL:", error);
       setShowApiInput(true);
     }
   };
@@ -50,7 +50,7 @@ export default function Login({ setConfig, setLogin }) {
         setLoading(false);
       }
     } catch (error) {
-      console.error("Auto-login failed:", error);
+      console.log("Auto-login failed:", error);
       setLoading(false);
     }
   };

@@ -34,7 +34,7 @@ const ChatDetailScreen = () => {
 
                 await authenticateFeathers();
             } catch (e) {
-                console.error("Chat detail init error:", e.message);
+                console.log("Chat detail init error:", e.message);
             } finally {
                 setLoading(false);
             }

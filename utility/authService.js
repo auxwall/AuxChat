@@ -20,7 +20,7 @@ export const login = async ({ userName, password }) => {
       throw new Error(response.data?.message || "Login failed");
     }
   } catch (error) {
-    console.error("Login API Error:", error.response?.data || error.message);
+    console.log("Login API Error:", error.response?.data || error.message);
     throw new Error(error.response?.data?.message || error.message || "Connection error");
   }
 };

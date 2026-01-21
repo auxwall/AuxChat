@@ -7,6 +7,8 @@ import { useNavigation } from '@react-navigation/native';
 import color from '../utility/color';
 import { Ionicons } from '@expo/vector-icons';
 import { DeviceEventEmitter } from 'react-native';
+import Alert from 'react-native';
+import { removePushTokenAsync } from '../utility/registerPushNotification';
 
 export default function ChatListScreen() {
   const [client, setClient] = useState(null);
@@ -28,7 +30,7 @@ export default function ChatListScreen() {
         
         await authenticateFeathers();
       } catch (e) {
-        console.error("Chat list init error:", e.message);
+        console.log("Chat list init error:", e.message);
       } finally {
         setLoading(false);
       }
@@ -80,16 +82,31 @@ export default function ChatListScreen() {
     });
   };
 
-  const handleLogout = async () => {
+  const doLogout = async () => {
     try {
+      // 0. Remove Push Token (Before clearing other storage)
+      await removePushTokenAsync();
       await removeStorage('accessToken');
       await removeStorage('appUser');
       await removeStorage('savedUser');
       DeviceEventEmitter.emit('event.logout');
     } catch (error) {
-      console.error("Logout error:", error);
+      console.log("Logout error:", error);
     }
   };
+
+  const handleLogout = () => {
+    Alert.Alert.alert(
+      "Logout",
+      "Are you sure you want to logout?",
+      [
+        { text: "Cancel", style: "cancel" },
+        { text: "Logout", style: "destructive", onPress: doLogout },
+      ],
+      { cancelable: true }
+    );
+  };
+
 
   if (loading || !client) {
     return (
