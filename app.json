@@ -1,29 +1,52 @@
 {
   "expo": {
-    "name": "auxChat",
-    "slug": "auxChat",
+    "name": "Aux Chat",
+    "owner": "auxwall2",
+    "slug": "auxchat",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
+    "scheme": "auxchat",
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.auxwall.auxchat",
+      "buildNumber": "1"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "package": "com.auxwall.auxchat",
+      "edgeToEdgeEnabled": false,
+      "versionCode": 1
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-secure-store",
+      "expo-notifications",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app needs access to your photos to let you select an existing image.",
+          "cameraPermission": "The app needs access to your camera to let you take a new photo."
+        }
+      ],
+      "expo-font"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "a45d0df7-3496-4907-aa6d-7bee10eb016b"
+      }
     }
   }
 }
