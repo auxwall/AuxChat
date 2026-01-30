@@ -3,7 +3,7 @@
     "name": "Aux Chat",
     "owner": "auxwall2",
     "slug": "auxchat",
-    "version": "1.0.1",
+    "version": "1.0.4",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -17,10 +17,14 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.auxwall.auxchat",
-      "buildNumber": "1",
+      "buildNumber": "2",
       "googleServicesFile": "./GoogleService-Info.plist",
       "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSMicrophoneUsageDescription": "This app needs access to your microphone to let you record and send voice messages directly to your contacts within the chat.",
+        "NSPhotoLibraryUsageDescription": "This app needs access to your photos to let you select and share images with other users in the chat, such as sharing a photo of your exercise form or a document.",
+        "NSCameraUsageDescription": "This app needs access to your camera to let you take and send photos immediately to your contacts, such as capturing a quick update or a progress photo.",
+        "NSPhotoLibraryAddUsageDescription": "This app needs access to your photo library to save images you receive in the chat to your device."
       }
     },
     "android": {
@@ -31,9 +35,16 @@
       "googleServicesFile": "./google-services.json",
       "package": "com.auxwall.auxchat",
       "edgeToEdgeEnabled": false,
-      "versionCode": 2,
+      "versionCode": 5,
       "permissions": [
-        "android.permission.RECORD_AUDIO"
+        "android.permission.RECORD_AUDIO",
+        "android.permission.CAMERA"
+      ],
+      "blockedPermissions": [
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.READ_MEDIA_IMAGES",
+        "android.permission.READ_MEDIA_VIDEO"
       ]
     },
     "web": {
@@ -45,11 +56,12 @@
       [
         "expo-image-picker",
         {
-          "photosPermission": "The app needs access to your photos to let you select an existing image.",
-          "cameraPermission": "The app needs access to your camera to let you take a new photo."
+          "photosPermission": "This app needs access to your photos to let you select and share images with other users in the chat, such as sharing a photo of your exercise form or a document.",
+          "cameraPermission": "This app needs access to your camera to let you take and send photos immediately to your contacts, such as capturing a quick update or a progress photo."
         }
       ],
-      "expo-font"
+      "expo-font",
+      "expo-av"
     ],
     "extra": {
       "eas": {

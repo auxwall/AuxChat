@@ -57,6 +57,7 @@ const ChatDetailScreen = () => {
             textColor: color.primary,
             cardBackground: '#ffffff',
             navigatorBackgroundColor: color.primary,
+            messageBackgroundColor: color.white,
             myMessageTextColor: '#fff',
             tickColor: '#fff',
         }

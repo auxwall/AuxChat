@@ -1,11 +1,12 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { NavigationContainer, createNavigationContainerRef } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { DeviceEventEmitter, TouchableOpacity, Text, Platform } from 'react-native';
+import { DeviceEventEmitter, TouchableOpacity, Text, Platform, Alert } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { feathersManager } from '@auxwall/messenger';
 import * as Notifications from 'expo-notifications';
+import * as ScreenCapture from 'expo-screen-capture';
 import { registerForPushNotificationsAsync } from './utility/registerPushNotification';
 
 const navigationRef = createNavigationContainerRef();
@@ -82,6 +83,20 @@ const MessagesStackScreen = ({ navigation }) => (
 );
 
 export default function App() {
+  // Global screenshot and screen recording restriction
+  ScreenCapture.usePreventScreenCapture();
+
+  useEffect(() => {
+    const subscription = ScreenCapture.addScreenshotListener(() => {
+      Alert.alert(
+        "Permission Denied",
+        "For security reasons, screenshots are not allowed in this app.",
+        [{ text: "OK" }]
+      );
+    });
+    return () => subscription.remove();
+  }, []);
+
   const [user, setUser] = useState(false);
   const [endPoint, setEndPoint] = useState(false);
 
