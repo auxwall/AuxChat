@@ -50,6 +50,10 @@ const ChatDetailScreen = () => {
 
     const chatConfig = {
         ...staffConfig,
+        upload: {
+            ...staffConfig.upload,
+            allowedDocumentTypes: '*/*',
+        },
         theme: {
             ...staffConfig.theme,
             primaryColor: color.primary,

@@ -3,7 +3,7 @@
     "name": "Aux Chat",
     "owner": "auxwall2",
     "slug": "auxchat",
-    "version": "1.0.4",
+    "version": "1.0.5",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -17,7 +17,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.auxwall.auxchat",
-      "buildNumber": "2",
+      "buildNumber": "3",
       "googleServicesFile": "./GoogleService-Info.plist",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
@@ -35,7 +35,7 @@
       "googleServicesFile": "./google-services.json",
       "package": "com.auxwall.auxchat",
       "edgeToEdgeEnabled": false,
-      "versionCode": 5,
+      "versionCode": 6,
       "permissions": [
         "android.permission.RECORD_AUDIO",
         "android.permission.CAMERA"
