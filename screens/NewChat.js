@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import {  View,  Text,  StyleSheet,  FlatList,  TextInput,  TouchableOpacity,  ActivityIndicator, Image, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import color from '../utility/color';
 import { usePeople } from '@auxwall/messenger';
 import { getApiUrl } from '../utility/feathersClient';
@@ -14,6 +14,8 @@ export default function NewChatScreen() {
   const [filteredData, setFilteredData] = useState([]);
   const [config, setConfig] = useState({ apiBaseUrl: '', accessToken: '' });
   const navigation = useNavigation();
+  const route = useRoute();
+  const sharedFile = route.params?.sharedFile;
 
   useEffect(() => {
     const loadConfig = async () => {
@@ -66,7 +68,8 @@ export default function NewChatScreen() {
         image: item.image,
         targetId: item.id,
         targetType: item.userType,
-        targetName: item.name
+        targetName: item.name,
+        sharedFile: sharedFile
     });
 
     setTimeout(() => setIsNavigating(false), 500);

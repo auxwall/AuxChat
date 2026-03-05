@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, ActivityIndicator } from 'react-native';
-import { ChatScreen, staffConfig } from '@auxwall/messenger';
+import { ChatScreen, staffConfig, useFileUpload } from '@auxwall/messenger';
 import { getFeathersClient, authenticateFeathers, getApiUrl } from '../utility/feathersClient';
 import { getStorage } from '../components/Storage';
 import { useRoute, useNavigation } from '@react-navigation/native';
@@ -10,7 +10,7 @@ import { StatusBar } from 'expo-status-bar';
 const ChatDetailScreen = () => {
     const route = useRoute();
     const navigation = useNavigation();
-    const { id, title, image, targetId, targetType, targetName } = route.params;
+    const { id, title, image, targetId, targetType, targetName, sharedFile } = route.params;
 
     const [client, setClient] = useState(null);
     const [userData, setUserData] = useState(null);
@@ -48,7 +48,7 @@ const ChatDetailScreen = () => {
         name: (targetName || title)
     } : undefined;
 
-    const chatConfig = {
+    const chatConfigObj = {
         ...staffConfig,
         upload: {
             ...staffConfig.upload,
@@ -66,6 +66,65 @@ const ChatDetailScreen = () => {
             tickColor: '#fff',
         }
     };
+
+    const { uploadFileToBackend } = useFileUpload({ config: chatConfigObj, apiBaseUrl: config.apiBaseUrl, accessToken: config.accessToken });
+    const [hasUploaded, setHasUploaded] = useState(false);
+
+    useEffect(() => {
+        if (sharedFile && client && userData && config.accessToken && !hasUploaded) {
+            handleUploadSharedFile();
+        }
+    }, [sharedFile, client, userData, config.accessToken, hasUploaded]);
+
+    const handleUploadSharedFile = async () => {
+        setHasUploaded(true);
+        try {
+            let activeId = id === 'pending' ? null : id;
+            
+            if (!activeId && targetUserObj) {
+                const convService = client.service('api/conversations');
+                const query = { type: 'individual', companyId: userData.companyId };
+                if (targetUserObj.userType === 'member') {
+                    query.clientId = targetUserObj.id;
+                    query.staffId = userData.id;
+                } else {
+                    query.staffId = targetUserObj.id;
+                }
+                const res = await convService.find({ query });
+                let existingConv = (res.data || res).find(c => 
+                    c.participants &&
+                    c.participants.some(p => String(p.userId) === String(targetUserObj.id)) &&
+                    c.participants.some(p => String(p.userId) === String(userData.id))
+                );
+                
+                if (!existingConv) {
+                    const createData = { type: 'individual', name: targetUserObj.name, createdByType: 'staff' };
+                    if (targetUserObj.userType === 'member') {
+                        createData.clientId = targetUserObj.id;
+                        createData.staffId = userData.id;
+                    } else {
+                        createData.staffId = targetUserObj.id;
+                    }
+                    existingConv = await convService.create(createData, { query: { companyId: userData.companyId } });
+                }
+                activeId = existingConv.id;
+            }
+
+            if (activeId) {
+                const type = sharedFile.mimeType.startsWith('image/') ? 'image' : (sharedFile.mimeType.startsWith('audio/') ? 'audio' : 'document');
+                await uploadFileToBackend(sharedFile.uri, sharedFile.name, sharedFile.mimeType, {
+                    conversationId: activeId,
+                    type: type,
+                    senderId: userData.id,
+                    companyId: userData.companyId
+                });
+            }
+        } catch(e) {
+            console.log("File Upload Error", e);
+        }
+    };
+
+    const chatConfig = chatConfigObj;
 
     if (loading || !client) {
         return (

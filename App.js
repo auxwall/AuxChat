@@ -1,12 +1,14 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { NavigationContainer, createNavigationContainerRef } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { useShareIntent } from 'expo-share-intent';
 import { DeviceEventEmitter, TouchableOpacity, Text, Platform, Alert } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { feathersManager } from '@auxwall/messenger';
 import * as Notifications from 'expo-notifications';
 import * as ScreenCapture from 'expo-screen-capture';
+import Toast from 'react-native-toast-message';
 import { registerForPushNotificationsAsync } from './utility/registerPushNotification';
 
 const navigationRef = createNavigationContainerRef();
@@ -26,6 +28,7 @@ import ChatListScreen from './screens/ChatList';
 import ChatDetailScreen from './screens/ChatDetail';
 import NewChatScreen from './screens/NewChat';
 import CreateGroupScreen from './screens/CreateGroup';
+import ShareScreen from './screens/ShareScreen';
 
 // Utilities
 import { getStorage } from './components/Storage';
@@ -79,10 +82,59 @@ const MessagesStackScreen = ({ navigation }) => (
       component={CreateGroupScreen}
       options={{ headerShown: false }}
     />
+    <MessagesStack.Screen
+      name="ShareScreen"
+      component={ShareScreen}
+      options={{ headerShown: false }}
+    />
   </MessagesStack.Navigator>
 );
 
 export default function App() {
+  const { hasShareIntent, shareIntent, resetShareIntent, error } = useShareIntent();
+
+  useEffect(() => {
+    if (!hasShareIntent || !shareIntent || !shareIntent.files) return;
+
+    const handleShare = async () => {
+      let retryCount = 0;
+      while (!navigationRef.isReady() && retryCount < 30) {
+        await new Promise(r => setTimeout(r, 100));
+        retryCount++;
+      }
+
+      if (!navigationRef.isReady()) {
+        console.log("Navigation never became ready");
+        return;
+      }
+
+      const sharedFile = shareIntent.files?.[0];
+      if (!sharedFile) return;
+
+      // Check both path and uri (Android content providers vary)
+      const fileUri = sharedFile.path || sharedFile.uri || sharedFile.value;
+
+      const fileObj = {
+        uri: fileUri,
+        name: sharedFile.fileName || "shared_file",
+        mimeType: sharedFile.type || "image/jpeg"
+      };
+
+      if (user) {
+        console.log("Navigating to ShareScreen with file:", fileObj.uri);
+        navigationRef.navigate('Messages', {
+          screen: 'ShareScreen',
+          params: { sharedFile: fileObj }
+        });
+        // Delay reset slightly so the target screen can capture the params
+        setTimeout(() => resetShareIntent(), 500);
+      } else {
+        console.log("User not logged in, share intent waiting...");
+      }
+    };
+
+    handleShare();
+  }, [hasShareIntent, shareIntent, user]);
   // Global screenshot and screen recording restriction
   ScreenCapture.usePreventScreenCapture();
 
@@ -188,6 +240,7 @@ export default function App() {
           )}
         </Stack.Navigator>
       </NavigationContainer>
+      <Toast />
     </SafeAreaProvider>
   );
 }
