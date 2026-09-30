@@ -53,6 +53,11 @@
   },
   "private": true,
   "expo": {
+    "autolinking": {
+      "exclude": [
+        "expo-av"
+      ]
+    },
     "doctor": {
       "reactNativeDirectoryCheck": {
         "exclude": [
