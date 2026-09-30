@@ -13,14 +13,18 @@ import { registerForPushNotificationsAsync } from './utility/registerPushNotific
 
 const navigationRef = createNavigationContainerRef();
 
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldPlaySound: true,
-    shouldSetBadge: false,
-    shouldShowBanner: true,
-    shouldShowList: true,
-  }),
-});
+try {
+  Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+      shouldPlaySound: true,
+      shouldSetBadge: false,
+      shouldShowBanner: true,
+      shouldShowList: true,
+    }),
+  });
+} catch (e) {
+  console.log('Notification handler registration skipped:', e);
+}
 
 // Import Screens
 import Login from './screens/Login';
@@ -171,23 +175,30 @@ export default function App() {
       setUser(false);
     });
 
-    const notificationSubscription = Notifications.addNotificationResponseReceivedListener(response => {
-      const { screen, params } = response.notification.request.content.data;
-      
-      if (screen === 'ChatScreen' || screen === 'ChatDetail') {
-        const conversationId = params?.conversationId || params?.id;
-        if (conversationId && navigationRef.isReady()) {
-          navigationRef.navigate('Messages', {
-            screen: 'ChatDetail',
-            params: { id: conversationId, title: params?.title }
-          });
+    let notificationSubscription = null;
+    try {
+      notificationSubscription = Notifications.addNotificationResponseReceivedListener(response => {
+        const { screen, params } = response.notification.request.content.data;
+        
+        if (screen === 'ChatScreen' || screen === 'ChatDetail') {
+          const conversationId = params?.conversationId || params?.id;
+          if (conversationId && navigationRef.isReady()) {
+            navigationRef.navigate('Messages', {
+              screen: 'ChatDetail',
+              params: { id: conversationId, title: params?.title }
+            });
+          }
         }
-      }
-    });
+      });
+    } catch (e) {
+      console.log('Notification response listener setup skipped:', e);
+    }
 
     return () => {
       subscription.remove();
-      notificationSubscription.remove();
+      if (notificationSubscription && notificationSubscription.remove) {
+        notificationSubscription.remove();
+      }
     };
   }, []);
 
@@ -195,12 +206,16 @@ export default function App() {
   useEffect(() => {
     async function setupNotifications() {
       if (Platform.OS === 'android') {
-        await Notifications.setNotificationChannelAsync('default', {
-          name: 'default',
-          importance: Notifications.AndroidImportance.MAX,
-          vibrationPattern: [0, 250, 250, 250],
-          lightColor: '#FF231F7C',
-        });
+        try {
+          await Notifications.setNotificationChannelAsync('default', {
+            name: 'default',
+            importance: Notifications.AndroidImportance.MAX,
+            vibrationPattern: [0, 250, 250, 250],
+            lightColor: '#FF231F7C',
+          });
+        } catch (e) {
+          console.log('Notification channel setup skipped:', e);
+        }
       }
 
       if (user && endPoint) {

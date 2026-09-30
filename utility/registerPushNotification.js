@@ -1,5 +1,7 @@
+import { Platform } from 'react-native';
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
+import Constants, { ExecutionEnvironment } from 'expo-constants';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 
@@ -8,23 +10,34 @@ const STAFF_PREFIX = 700000;
 export const registerForPushNotificationsAsync = async (staffId, accessToken) => {
   if (!Device.isDevice) return;
 
-  const { status: existingStatus } = await Notifications.getPermissionsAsync();
-  let finalStatus = existingStatus;
-
-  if (existingStatus !== 'granted') {
-    const { status } = await Notifications.requestPermissionsAsync();
-    finalStatus = status;
-  }
-
-  if (finalStatus !== 'granted') {
-    console.log('Failed to get push token for chat app');
+  // In Android Expo Go (SDK 53+), remote FCM notifications are not supported by the Expo Go client
+  const isExpoGo = Constants.appOwnership === 'expo' || Constants.executionEnvironment === ExecutionEnvironment.StoreClient || Constants.executionEnvironment === 'storeClient';
+  if (Platform.OS === 'android' && isExpoGo) {
+    console.log('Skipping push notification registration on Android Expo Go (development build required for remote FCM push).');
     return;
   }
 
-  const tokenData = await Notifications.getExpoPushTokenAsync();
-  const expoPushToken = tokenData.data;
+  try {
+    const { status: existingStatus } = await Notifications.getPermissionsAsync();
+    let finalStatus = existingStatus;
 
-  await saveTokenIfChanged(expoPushToken, staffId, accessToken);
+    if (existingStatus !== 'granted') {
+      const { status } = await Notifications.requestPermissionsAsync();
+      finalStatus = status;
+    }
+
+    if (finalStatus !== 'granted') {
+      console.log('Failed to get push token for chat app');
+      return;
+    }
+
+    const tokenData = await Notifications.getExpoPushTokenAsync();
+    const expoPushToken = tokenData.data;
+
+    await saveTokenIfChanged(expoPushToken, staffId, accessToken);
+  } catch (err) {
+    console.log('Push notification registration skipped or failed:', err.message);
+  }
 };
 
 export const saveTokenIfChanged = async (newToken, staffId, accessToken) => {
