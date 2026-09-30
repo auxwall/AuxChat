@@ -8,7 +8,7 @@
     "web": "expo start --web"
   },
   "dependencies": {
-    "@auxwall/messenger": "git+https://github.com/auxwall/auxwallMessenger.git#main",
+    "@auxwall/messenger": "github:auxwall/auxwallMessenger#main",
     "@expo/react-native-action-sheet": "^4.1.1",
     "@expo/vector-icons": "^15.0.2",
     "@feathersjs/authentication-client": "^5.0.37",
