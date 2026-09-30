@@ -3,7 +3,7 @@
     "name": "Aux Chat",
     "owner": "auxwall2",
     "slug": "auxchat",
-    "version": "1.0.8",
+    "version": "1.0.9",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -28,7 +28,7 @@
       },
       "googleServicesFile": "./google-services.json",
       "package": "com.auxwall.auxchat",
-      "versionCode": 17,
+      "versionCode": 18,
       "permissions": [
         "android.permission.RECORD_AUDIO",
         "android.permission.CAMERA"
