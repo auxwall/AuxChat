@@ -51,19 +51,5 @@
     "react-native-worklets": "0.10.1",
     "socket.io-client": "^4.8.3"
   },
-  "private": true,
-  "expo": {
-    "autolinking": {
-      "exclude": [
-        "expo-av"
-      ]
-    },
-    "doctor": {
-      "reactNativeDirectoryCheck": {
-        "exclude": [
-          "expo-av"
-        ]
-      }
-    }
-  }
+  "private": true
 }
