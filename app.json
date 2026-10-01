@@ -4,7 +4,6 @@
     "owner": "auxwall2",
     "slug": "auxchat",
     "version": "1.0.9",
-    "newArchEnabled": false,
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -59,7 +58,6 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      "expo-av",
       "expo-notifications",
       [
         "expo-image-picker",
